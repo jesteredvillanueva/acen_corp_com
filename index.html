@@ -616,7 +616,7 @@
   </div>
 </div>
 
-<script>
+<script type="module">
 /* ============================================================================
    ACEN WIND ENERGY EXPLORER  --  how this app works, in plain English
    ----------------------------------------------------------------------------
@@ -1051,7 +1051,59 @@ window.openWinds=openWinds; window.closeWinds=closeWinds; window.showWind=showWi
 
 window.addEventListener('load', function(){
     navigator.serviceWorker.register('sw.js').catch(function(){});
-  });
+});
+
+    let LEADERBOARDS = {}
+
+
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+    import {
+        getDatabase,
+        ref,
+        onValue,
+        push,
+        remove
+    } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
+
+    // Your web app's Firebase configuration
+    const firebaseConfig = {
+        apiKey: "AIzaSyBAk_3q_6tR--IjBjNP1b8vM3w93uVfe8U",
+        authDomain: "department-of-energy-2de0b.firebaseapp.com",
+        databaseURL: "https://department-of-energy-2de0b-default-rtdb.asia-southeast1.firebasedatabase.app",
+        projectId: "department-of-energy-2de0b",
+        storageBucket: "department-of-energy-2de0b.firebasestorage.app",
+        messagingSenderId: "122910698996",
+        appId: "1:122910698996:web:cc7212a803c6b2625d1da1"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
+    const leaderboardsRef = ref(db, "leaderboards");
+    getCurrentLeaderboards()
+   
+    function getCurrentLeaderboards() {
+        onValue(leaderboardsRef, (snapshot) => {
+            LEADERBOARDS = snapshot.val() || {};
+
+            Object.values(LEADERBOARDS).forEach((user) => {
+                alert(JSON.stringify(user))
+            })
+        });
+    }
+
+    // "Points" must be final before pushing the data
+    // pushData("User1", 99)
+    function pushData(user, points) {
+        push(leaderboardsRef, { name: user, score: points})
+    }
+
+    // removeData("-OvsTRIV3QbG3w4Y0h62")
+    function removeData(id) {
+        remove(ref(db, `leaderboards/${id}`))
+    }
+
 </script>
 </body>
 </html>
